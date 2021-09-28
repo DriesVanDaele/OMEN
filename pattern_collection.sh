@@ -13,16 +13,13 @@ parameterFiles=($(swipl -g "generate_experiment(Experiment_File), write(Experime
 # number of cores you wish to employ simultaneously
 parts=20
 
-# the working directory
-workdir=pattern_collection_working_dir
-
 # the archival directory storing the output and the experiment file
 archivedir=output
 
 for element in "${parameterFiles[@]}";
 do
     # clean the working directory
-    rm -f *.pl.split*
+    #rm -f *.pl.split*
 
     # split the experiment into $parts pieces
     swipl -g "split(${parts}, '${element}'), halt" -l experiment_splitter.pl
@@ -36,8 +33,10 @@ do
         echo "consult(experiment_framework), generate_experiment("${test}"), halt" >> argfile
     done
 
+    echo "here the shit starts..."
     # run the commands in parallel
-    parallel --gnu --ungroup --joblog joblog --workdir $workdir --sshloginfile nodes2 --delay 1 "yap -z" :::: argfile
+    #parallel --gnu --ungroup --joblog joblog --workdir $workdir --sshloginfile nodes2 --delay 1 "yap -z" :::: argfile
+    parallel --gnu --ungroup --delay 1 "yap -z " :::: argfile
 
     echo "FFFFFFFFFF"
     # merge the output into a single file
@@ -56,13 +55,14 @@ do
     ##mkdir ${unique_directory}
     for split_file in  ${element}.split+([0-9]);
     do
-	#echo 'not removing file'
+	echo 'not removing file'
         ##mv $split_file  ${unique_directory}/
         ##mv ${split_file}.output ${unique_directory}/
-        rm $split_file
-        rm ${split_file}.output
+
+        #rm $split_file
+        #rm ${split_file}.output
     done
-    rm argfile
+    #rm argfile
 done
 
 shopt -u extglob
