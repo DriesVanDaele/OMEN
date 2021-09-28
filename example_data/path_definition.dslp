@@ -1,0 +1,487 @@
+:- use_module(library(apply)).
+:- use_module(library(lists)).
+
+###(probabilistic_debug_member/2, 1).
+###(probabilistic_debug_member/3, 1).
+###(probabilistic_member/2, 1). % regardless of the downscaling bias
+                                % that is in use, probabilistic_member/2
+                                % must at all times remain unbiased
+                                % in order to specify a uniform
+                                % distribution
+
+consult_background(Gene_Patient_Probability_File, Gene_Frequency_File, Network_File, Genes_Selection_File) :-
+    consult(Genes_Selection_File),
+    consult(Gene_Patient_Probability_File), % vs logp
+    consult(Gene_Frequency_File), % vs cutoff
+    consult(Network_File).
+
+1/L ## length([_|Xs], L) # probabilistic_member(X, [X|Xs]).
+(L-1)/L ## length([_|Xs], L) # probabilistic_member(X, [_|Xs]) :-
+    probabilistic_member(X, Xs).
+
+1 # probabilistic_debug_member(X, Xs) :-
+    length(Xs, T),
+    probabilistic_debug_member(X, 1, T, Xs).
+
+1/L ## length([_|Xs], L) # probabilistic_debug_member(X, Count, T, [X|Xs]).
+(L-1)/L ## length([_|Xs], L) # probabilistic_debug_member(X, Count, T, [_|Xs]) :-
+    Percentage is Count / T * 100,
+    format(user_error, '~f % finished~n', [Percentage]),
+    succ(Count, Count1),
+    probabilistic_debug_member(X, Count1, T, Xs).
+
+selected_genes2(Gene_Set) :-
+    findall(Gene, (selection(Gene_Set, _), member(Gene, Gene_Set)), Genes),
+    sort(Genes, Gene_Set).
+
+selected_genes3(Gene_Set) :-
+    selection(Gene_Set, _).
+
+gene_selection(Gene_Set, Total_Number_Of_Genes) :-
+    selection(Gene_Set, Total_Number_Of_Genes).
+
+genes(Gene_Set) :-
+    findall(Gene, gene_patient_probability(Gene, _, _), Genes),
+    sort(Genes, Gene_Set).
+
+key_value_pair(K, V, K-V).
+
+
+times(X, Y, Z) :-
+    Z is X * Y.
+
+divide_by(X, Y, Z) :-
+    Z is Y / X.
+
+1 # recursive_solution(Selection, Metric_Info) :-
+    draw_start_gene(uniform_distribution, Gene),
+    recursive_selection([Gene], Metric_Info, Selection).
+
+0.5 # solution_2_or_3_genes(Metric_Info, Pattern_Quality_Threshold, Selection) :-
+    gene_selection(Gene_Subset, Total_Number_Of_Genes),
+    length(Gene_Subset, L),
+    Penalty is L / Total_Number_Of_Genes,
+    selected_start_gene(uniform_distribution, Penalty, Gene),
+    extend_selection([Gene], Metric_Info, Selection),
+    evaluation_metric(Metric_Info, Selection, S),
+    S >= Pattern_Quality_Threshold.
+    %( S >= Pattern_Quality_Threshold -> writeln(accepted) ; writeln(rejected), false).
+0.5 # solution_2_or_3_genes(Metric_Info, Pattern_Quality_Threshold, Selection) :-
+    gene_selection(Gene_Subset, Total_Number_Of_Genes),
+    length(Gene_Subset, L),
+    Penalty is L / Total_Number_Of_Genes,
+    selected_start_gene(uniform_distribution, Penalty, Gene),
+    extend_selection([Gene], Metric_Info, Gene_Sequence0),
+    extend_selection(Gene_Sequence0, Metric_Info, Selection),
+    evaluation_metric(Metric_Info, Selection, S),
+    S >= Pattern_Quality_Threshold.
+
+1 # solution_3_genes(Metric_Info, Pattern_Quality_Threshold, Selection) :-
+    gene_selection(Gene_Subset, Total_Number_Of_Genes),
+    length(Gene_Subset, L),
+    Penalty is L / Total_Number_Of_Genes,
+    selected_start_gene(uniform_distribution, Penalty, Gene),
+    extend_selection([Gene], Metric_Info, Gene_Sequence0),
+    extend_selection(Gene_Sequence0, Metric_Info, Selection),
+    evaluation_metric(Metric_Info, Selection, S),
+    S >= Pattern_Quality_Threshold.
+
+1 # solution_4_genes(Metric_Info, Pattern_Quality_Threshold, Selection) :-
+    gene_selection(Gene_Subset, Total_Number_Of_Genes),
+    length(Gene_Subset, L),
+    Penalty is L / Total_Number_Of_Genes,
+    selected_start_gene(uniform_distribution, Penalty, Gene),
+    extend_selection([Gene], Metric_Info, Gene_Sequence0),
+    extend_selection(Gene_Sequence0, Metric_Info, Gene_Sequence1),
+    extend_selection(Gene_Sequence1, Metric_Info, Selection),
+    evaluation_metric(Metric_Info, Selection, S),
+    S >= Pattern_Quality_Threshold.
+
+Penalty # selected_start_gene(uniform_distribution, Penalty, Start_Gene) :-
+    gene_selection(Genes, _),
+    probabilistic_debug_member(Start_Gene, Genes).
+
+1 # draw_start_gene(uniform_distribution, Start_Gene) :-
+    genes(Genes),
+    probabilistic_debug_member(Start_Gene, Genes).
+
+1 # extend_selection([Current_Gene | Genes], Metric_Info, [Candidate_Gene, Current_Gene | Genes]) :-
+    outgoing_neighbours(Current_Gene, Candidate_Genes0),
+    subtract(Candidate_Genes0, [Current_Gene | Genes], Candidate_Genes),
+    f([Current_Gene | Genes], Candidate_Genes, Metric_Info, Candidate_Gene).
+
+0.5 # recursive_selection(X, _, X) :-
+    length(X, L),
+    L > 1.
+0.5 # recursive_selection([Current_Gene | Genes], Metric_Info, Output) :-
+    outgoing_neighbours(Current_Gene, Candidate_Genes0),
+    subtract(Candidate_Genes0, [Current_Gene | Genes], Candidate_Genes),
+    f([Current_Gene | Genes], Candidate_Genes, Metric_Info, Candidate_Gene),
+    recursive_selection([Candidate_Gene, Current_Gene | Genes], Metric_Info, Output).
+
+
+outgoing_neighbours(X, Ys) :-
+    findall(Y, interaction(X, Y), Ys0),
+    sort(Ys0, Ys).
+
+1 # f(Xs, Ys, Metric_Info, Y) :-
+    extensions(Xs, Ys, YXs),
+    maplist(evaluation_metric(Metric_Info), YXs, Ss), 
+    halting(Ss, Halting_Probability),
+    normalize2(Ss, Ts),
+    scale((1-Halting_Probability), Ts, Us),
+    member_probability(Y, Ys, Us).
+    
+scale(Factor, Xs, Ys) :-
+    maplist(times(Factor), Xs, Ys).
+
+normalize2(Xs, Ys) :-
+    sumlist(Xs, T),
+    ( T > 0 ->
+          maplist(divide_by(T), Xs, Ys)
+    ;
+          Xs = Ys
+    ).
+
+complement(X, Y) :-
+    Y is 1 - X.
+
+% previous one defaulted to 1 for empty list,
+% this one fails
+product(Xs, P) :-
+    length(Xs, L),
+    L > 0,
+    product_helper(Xs, 1, P).
+
+product_helper([], Acc, P) :-
+    P is Acc.
+product_helper([X | Xs], Acc, P) :-
+    product_helper(Xs, X * Acc, P).
+
+halting(Probabilities, Halting_Probability) :-
+    maplist(complement, Probabilities, Complement_Probabilities),
+    product(Complement_Probabilities, Halting_Probability).
+
+P # member_probability(X, [X | Xs], [P | Ps]).
+1 # member_probability(X, [_ | Xs], [_ | Ps]) :-
+    member_probability(X, Xs, Ps).
+
+myappend(Xs, Y, [Y | Xs]).
+
+extensions(Xs, Ys, YXs) :-
+    maplist(myappend(Xs), Ys, YXs).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% METRIC DUMP
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+visualize(Genes) :-
+    build_matrix(Genes, matrix(A)),
+    forall(member(X, A), 
+           (forall(member(P, X),
+                   (O is ceiling(P), write(O), 
+                    tab(1))),
+            nl)
+    ).
+
+evaluation_metric(Metric_Info, Genes, Score) :-
+    build_matrix(Genes, Matrix),
+    total_score(Genes, Matrix, Metric_Info, Score).
+
+portray_matrix(Xs) :-
+    forall(member(X, Xs), (forall(member(A, X), write(A), write(' ')), nl)).
+
+build_matrix(Genes, matrix(Matrix)) :-
+    findall(G-Pa-Pr,
+            (member(G, Genes),
+             gene_patient_probability(G, Pa, Pr)),
+            GPaPrs),
+    findall(G, member((G-_-_), GPaPrs), Gs),
+    findall(P, member(_-P-_, GPaPrs), Ps),
+    sort(Gs, Gene_Set),
+    sort(Ps, Patient_Set),
+    findall(Scores, 
+            (member(Patient, Patient_Set), 
+             numbers(Genes, GPaPrs, Patient, Scores)),
+            Matrix).
+
+default_probability(0).
+
+
+numbers([], _, _, []).
+numbers([G | Genes], GPaPrs, Patient, [P | Probabilities]) :-
+    ( memberchk(G-Patient-P, GPaPrs) ->
+        true
+    ;
+        default_probability(Default_P),
+        Default_P = P
+    ),
+    numbers(Genes, GPaPrs, Patient, Probabilities).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% METRIC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+key_pairize(X, Y, X-Y).
+
+transpose([], []).
+transpose([A|C], B) :-
+    foldl(A, B, [A|C], _).
+
+foldl(List1, List2, V0, V) :-
+    foldl_(List1, List2, V0, V).
+
+foldl_([], [], V, V).
+foldl_([H1|T1], [H2|T2], V0, V) :-
+    transpose_(H1, H2, V0, V1),
+    foldl_(T1, T2, V1, V).
+
+
+transpose_(_, Fs, Lists0, Lists) :-
+    maplist(list_first_rest, Lists0, Fs, Lists).
+
+list_first_rest([L|Ls], L, Ls).
+
+
+bram_metric(matrix(Matrix), Value) :-
+    transpose(Matrix, Transposed_Matrix),
+    maplist(sumlist, Transposed_Matrix, Gene_Mutation_Counts),
+    length(Gene_Mutation_Counts, N), 
+    findall(I, between(1, N, I), Is),
+    maplist(key_pairize, Gene_Mutation_Counts, Is, Counts_Indices),
+    keysort(Counts_Indices, Sorted_Count_Indices),
+    reverse(Sorted_Count_Indices, Reverse_Sorted_Count_Indices),
+    pairs_values(Reverse_Sorted_Count_Indices, Gene_Indices_Sorted_By_Descending_Mutation_Count),
+    bram_metric_value(matrix(Matrix), Gene_Indices_Sorted_By_Descending_Mutation_Count, 0, Value).
+    
+
+has_mutation(Index, Column) :-
+    nth1(Index, Column, 1).
+
+filter_matrix(matrix(Matrix), Index, matrix(Filtered_Matrix), matrix(Remaining_Matrix)) :-
+    partition(has_mutation(Index), Matrix, Filtered_Matrix, Remaining_Matrix).
+
+bram_metric_value(_, [], V, V) :- !.
+bram_metric_value(matrix(Matrix), [Index | Indices], Value0, Value) :-
+    filter_matrix(matrix(Matrix), Index, Filtered_Matrix, Remaining_Matrix),
+    bram_metric_partial_value(Filtered_Matrix, V),
+    Value1 is Value0 + V,
+    bram_metric_value(Remaining_Matrix, Indices, Value1, Value).
+
+score(Row, Score) :-
+    sumlist(Row, Number_Of_Mutations),
+    ( Number_Of_Mutations > 0 ->
+        Score is 1 / Number_Of_Mutations
+    ;
+        Score = 0
+    ).
+
+bram_metric_partial_value(matrix(Filtered_Matrix), Partial_Value) :-
+    maplist(score, Filtered_Matrix, Scores),
+    sumlist(Scores, S),
+    Partial_Value is sqrt(S).
+
+overlap_score(Genes, Score) :-
+    sumlist(Genes, X),
+    ( X == 0 ->
+	Score = 0
+    ; X == 1 ->
+	Score = 1
+    ; 
+        length(Genes, N),
+        Score is 1 - (X/N)
+    ).
+	
+
+
+total_score(Genes, X, mcda(Type, Parameters), Y) :-
+    pattern_frequency(Genes, Pattern_Frequency),
+    X = matrix(A),
+    transpose(A, Transposed_Matrix),
+    maplist(sumlist, Transposed_Matrix, Gene_Mutation_Counts),
+    normalize2(Gene_Mutation_Counts, Gene_Mutation_Distribution),
+    entropy_based_genes_metric(Gene_Mutation_Distribution, Entropy_Term),
+
+    mutual_exclusivity_score(X, Y0),
+
+    ( Type == weighted_product ->
+        memberchk(alpha(Alpha), Parameters),
+        Y is Y0**Alpha * Pattern_Frequency**(1 - Alpha)
+    ;    
+      Type == weighted_sum ->
+        memberchk(alpha(Alpha), Parameters),
+        memberchk(beta(Beta), Parameters),
+        Y is Alpha * Y0 + (1 - Alpha) * (Beta * Entropy_Term + (1-Beta) * Pattern_Frequency)
+        %format('mutual exclusivity score is ~q, pattern frequency score is ~q~n', [Y0, Pattern_Frequency])
+    ;
+      throw(invalid_metric)
+    ).
+
+power(X, Y, Z) :-
+    Z is Y**X.
+
+gene_type_distribution(Gene, Coding_Region_Fraction, Promotor_Region_Fraction) :-
+    findall(Sample, patient_gene_probability_type(Sample, Gene, Probability, 'COD'), Samples_C),
+    findall(Sample, patient_gene_probability_type(Sample, Gene, Probability, 'COD'), Samples_P),
+    length(Samples_C, C_Count),
+    length(Samples_P, P_Count),
+    Total is C_Count + P_Count,
+    Coding_Region_Fraction is C_Count / Total,
+    Promotor_Region_Fraction is P_Count / Total.
+
+pattern_frequency_alt(Genes, P) :-
+    findall(Probability,
+	    (member(Gene, Genes),
+	     gene_type_distribution(Gene, Coding_Fraction, Promotor_Fraction),
+	     gene_type_normalized_score(Gene,'COD', Coding_Frequency_Score),
+	     gene_type_normalized_score(Gene,'PRO', Promotor_Frequency_Score),
+	     Probability is Coding_Fraction * Coding_Frequency_Score + Promotor_Fraction * Promotor_Frequency_Score),
+	    Probabilities),
+    sumlist(Probabilities, P0),
+    length(Probabilities, N),
+    P is P0 / N.
+
+pattern_frequency(Genes, P) :-
+    maplist(gene_mutsigcv, Genes, Probabilities),
+    sumlist(Probabilities, P0),
+    length(Probabilities, N),
+    P is P0 / N.
+
+logNormalCDF(Mean, Standard_Deviation, X, Y) :-
+    Y is 1/2 + 1/2 * erf(((log(X)/log(e)) - Mean) / (sqrt(2) * Standard_Deviation)).
+
+significantGeneProbability(Support, P) :-
+    logNormalCDF(1, 1, Support, P).
+
+
+matrix_gene_supports(matrix(Matrix), Supports) :-
+    transpose(Matrix, Transposed_Matrix),
+    findall(Support, 
+            ( member(Column, Transposed_Matrix),
+              include(<(0), Column, Observed_Mutations),
+              length(Observed_Mutations, Support)),
+            Supports).
+
+gene_supports_P(Supports, P) :-
+    maplist(significantGeneProbability, Supports, Ps),
+    product(Ps, P).
+
+
+
+overlap(matrix(Samples), Result) :-
+    maplist(entropy_based_metric, Samples, Scores),
+    length(Samples, N),
+    sumlist(Scores, Total_Score),
+    Result is Total_Score / N.
+
+mygini_score(matrix(Matrix), Result) :-
+    transpose(Matrix, Transposed_Matrix),
+    maplist(sumlist, Transposed_Matrix, Gene_Mutation_Counts),
+    mygini(Gene_Mutation_Counts, Result0),
+    Result is 1 - Result0.
+
+entropy(Values, Entropy) :-
+    maplist(entropy_term, Values, Entropy_Terms),
+    sumlist(Entropy_Terms, Entropy0),
+    Entropy is -1 * Entropy0.
+
+entropy_term(X, Y) :-
+    A is log(X),
+    B is log(2),
+    C is A/B,
+    Y is X * C.
+
+genes_to_distribution(Gene_Scores, Distribution, N) :-
+    length(Gene_Scores, N),
+    include(=\=(0), Gene_Scores, Distribution0),
+    normalize2(Distribution0, Distribution).
+
+entropy_based_metric(Genes, Result) :-
+    genes_to_distribution(Genes, Distribution, N),
+    ( Distribution = [] *->
+        Result = 0
+    ;
+        entropy(Distribution, Entropy),
+	Uniform_Distribution_P is 1 / N,
+	length(Uniform_Distribution, N),
+	maplist(=(Uniform_Distribution_P), Uniform_Distribution),
+	entropy(Uniform_Distribution, Max_Entropy),
+        max_list(Genes, Max),
+	Result is Max * (1 - Entropy / Max_Entropy)
+    ).
+
+entropy_based_genes_metric(Genes, Result) :-
+    genes_to_distribution(Genes, Distribution, N),
+    ( Distribution = [] *->
+        Result = 0
+    ;
+        entropy(Distribution, Entropy),
+	Uniform_Distribution_P is 1 / N,
+	length(Uniform_Distribution, N),
+	maplist(=(Uniform_Distribution_P), Uniform_Distribution),
+	entropy(Uniform_Distribution, Max_Entropy),
+	Result is Entropy / Max_Entropy
+    ).
+
+mygini(Values, Modified_Gini) :-
+    sumlist(Values, Total),
+    length(Values, N),
+    succ(M, N),
+    repl(0, M, Zeros),
+    gini(Values, Gini),
+    gini([Total | Zeros], Baseline),
+    ( Baseline > 0 ->
+        Modified_Gini is Gini / Baseline
+    ;
+        Modified_Gini = Gini
+    ).
+
+gini(Values, Gini) :-
+    inequality(Values, N),
+    sumlist(Values, V),
+    length(Values, L),
+    ( V > 0 ->
+        Gini is N / (V * L)
+    ;
+        Gini = 0
+    ).
+
+inequality(Mutation_Counts, X) :-
+    pairs(Mutation_Counts, 0, X).
+
+pairs([], X, X).
+pairs([X | Xs], Ys0, Ys) :-
+    length(Xs, N),
+    repl(X, N, As),
+    maplist(absolute_difference, As, Xs, Absolute_Differences),
+    sumlist(Absolute_Differences, Ys1),
+    Ys2 is Ys0 + Ys1,
+    pairs(Xs, Ys2, Ys).
+
+absolute_difference(X, Y, Z) :-
+    Z is abs(X - Y).
+
+repl(X, N, L) :-
+    length(L, N),
+    maplist(=(X), L).
+
+match((X1, X2), (Y1, Y2)) :-
+    compare(Order, X1, X2),
+    compare(Order, Y1, Y2).
+
+mutual_exclusivity_score(matrix(Samples), Result) :-
+    maplist(mutual_exclusivity, Samples, Scores),
+    length(Samples, N),
+    sumlist(Scores, Total_Score),
+    Result is Total_Score / N.
+
+
+mutual_exclusivity(Variables, Mutual_Exclusivity) :-
+    findall(Mutual_Exclusivity_Term,
+            (select(Variable, Variables, Remaining_Variables),
+             maplist(complement, Remaining_Variables, Complement_Remaining_Variables),
+             product(Complement_Remaining_Variables, Mutual_Exclusivity_Term0),
+             Mutual_Exclusivity_Term is Variable * Mutual_Exclusivity_Term0),
+            Mutual_Exclusivity_Terms),
+    sumlist(Mutual_Exclusivity_Terms, Mutual_Exclusivity).
