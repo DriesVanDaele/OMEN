@@ -6,7 +6,7 @@
 shopt -s extglob
 
 # generate the experiment files
-parameterFiles=($(swipl -g "consult(experiment_generator), generate_experiment(Experiment_File), write(Experiment_File), halt" | tr -d '[]' | tr ',' ' '))
+parameterFiles=($(swipl -g "generate_experiment(Experiment_File), write(Experiment_File), halt" -l experiment_generator.pl | tr -d '[]' | tr ',' ' '))
 
 # The number of pieces in which to split each experiment.
 # This number has to be at least as high (ideally equal) as the 
@@ -25,7 +25,7 @@ do
     rm -f *.pl.split*
 
     # split the experiment into $parts pieces
-    swipl -g "consult(experiment_splitter), split(${parts}, '${element}'), halt"
+    swipl -g "split(${parts}, '${element}'), halt" -l experiment_splitter.pl
     split_output_files=()
 
     # generate a file containing the commands to be executed
@@ -39,6 +39,7 @@ do
     # run the commands in parallel
     parallel --gnu --ungroup --joblog joblog --workdir $workdir --sshloginfile nodes2 --delay 1 "yap -z" :::: argfile
 
+    echo "FFFFFFFFFF"
     # merge the output into a single file
     split_output_files_list=$(IFS=,; echo "[${split_output_files[*]}]")
     # for some reason YAP ends up hanging on the findall/3, instead, stick to swipl

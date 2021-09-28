@@ -95,11 +95,11 @@ path_to_quoted_path([H | T], [Quoted_H | Quoted_T]) :-
     path_to_quoted_path(T, Quoted_T).
 
 
-user:message_hook(weighted_answer(Probability-walk_over_all_paths(_, Path)), _, Lines) :-
+user:message_hook(weighted_answer(Probability-walk_over_all_paths(_, Path)), _, _Lines) :-
     path_to_quoted_path(Path, Quoted_Path),
     print_message_lines(user_output, '', ['{ "path": ~w, "probability": ~w},'-[Quoted_Path, Probability]]).
 
-user:message_hook(weighted_answer(Probability-walk_over_all_paths(Path)), _, Lines) :-
+user:message_hook(weighted_answer(Probability-walk_over_all_paths(Path)), _, _Lines) :-
     path_to_quoted_path(Path, Quoted_Path),
     print_message_lines(user_output, '', ['{ "path": ~w, "probability": ~w},'-[Quoted_Path, Probability]]).
 
@@ -107,7 +107,7 @@ user:message_hook(weighted_answer(Probability-walk_over_all_paths(Path)), _, Lin
 
 
 % the one used by Lund
-user:message_hook(weighted_answer(Probability-walk_over_all_paths_correct(_, Path)), _, Lines) :-
+user:message_hook(weighted_answer(Probability-walk_over_all_paths_correct(_, Path)), _, _Lines) :-
     Path = [upstream_path(Upstream_Path), downstream_path(Downstream_Path)],
     reverse(Upstream_Path, Reversed_Upstream_Path),
     path_to_quoted_path(Reversed_Upstream_Path, Quoted_Reversed_Upstream_Path),
@@ -118,11 +118,11 @@ user:message_hook(weighted_answer(Probability-walk_over_all_paths_correct(_, Pat
 trace_json(edge(Movement, Gene1, Gene2, Type, Direction), Clean_Trace) :-
     path_to_quoted_path([Movement, Gene1, Gene2, Type, Direction], Clean_Trace).
 
-user:message_hook(weighted_answer(Probability-walk_over_all_paths_correct2(_, Path, Trace)), _, Lines) :-
+user:message_hook(weighted_answer(Probability-walk_over_all_paths_correct2(_, _Path, Trace)), _, _Lines) :-
     maplist(trace_json, Trace, Clean_Trace),
     print_message_lines(user_output, '', ['{ "path": ~w, "probability": ~w },'-[Clean_Trace, Probability]]).
 
-user:message_hook(weighted_answer(Probability-walk_over_all_paths_correct(Path)), _, Lines) :-
+user:message_hook(weighted_answer(Probability-walk_over_all_paths_correct(Path)), _, _Lines) :-
     Path = [upstream_path(Upstream_Path), downstream_path(Downstream_Path)],
     reverse(Upstream_Path, Reversed_Upstream_Path),
     path_to_quoted_path(Reversed_Upstream_Path, Quoted_Reversed_Upstream_Path),
@@ -131,27 +131,27 @@ user:message_hook(weighted_answer(Probability-walk_over_all_paths_correct(Path))
     print_message_lines(user_output, '', ['{ "path": ~w, "probability": ~w },'-[Quoted_Downstream_Path, Probability]]).
 
 
-user:message_hook(weighted_answer(Probability-connect_mutations(Gene_Percentile, Path)), _, Lines) :-
+user:message_hook(weighted_answer(Probability-connect_mutations(_Gene_Percentile, Path)), _, _Lines) :-
     write(user_error, Path),
     path_to_quoted_path(Path, Quoted_Path),
     write(user_error, Quoted_Path),
     print_message_lines(user_output, '', ['{ "path": ~w, "probability": ~w},'-[Quoted_Path, Probability]]).
 
-user:message_hook(weighted_answer(Probability-explore_neighbourhood(_, Path)), _, Lines) :-
+user:message_hook(weighted_answer(Probability-explore_neighbourhood(_, Path)), _, _Lines) :-
     path_to_quoted_path(Path, Quoted_Path),
     print_message_lines(user_output, '', ['{ "path": ~w, "probability": ~w},'-[Quoted_Path, Probability]]).
 
-user:message_hook(weighted_answer(Probability-explore_neighbourhood(Path)), _, Lines) :-
+user:message_hook(weighted_answer(Probability-explore_neighbourhood(Path)), _, _Lines) :-
     path_to_quoted_path(Path, Quoted_Path),
     print_message_lines(user_output, '', ['{ "path": ~w, "probability": ~w},'-[Quoted_Path, Probability]]).
 
-user:message_hook(upstream_path(Path), _, Lines) :-
+user:message_hook(upstream_path(_Path), _, _Lines) :-
     true.
 
-user:message_hook(downstream_path(Path), _, Lines) :-
+user:message_hook(downstream_path(_Path), _, _Lines) :-
     true.
 
-user:message_hook(interesting_path(Path), _, Lines) :-
+user:message_hook(interesting_path(_Path), _, _Lines) :-
     true.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
