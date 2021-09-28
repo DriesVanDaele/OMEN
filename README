@@ -1,0 +1,7 @@
+# FAME
+
+
+# required software
+SWI-Prolog version >7, on your path as 'swipl'
+yap version >6.2.2, on your path as 'yap'
+GNU Parallel, on your path as 'parallel'
