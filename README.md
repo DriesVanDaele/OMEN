@@ -28,6 +28,11 @@ Usage explicit scoring of paths:
 ./evaluate_paths.sh <experimentFile> <outputFile>
     <experimentFile>     : Path of the output file generated during pattern collection
     <outputFile>         : Path of the output file to store scored patterns
+
+Usage explicit filtering of paths:
+./filter_paths.sh <scoredPatternFile> <patternQualityThreshold>
+    <scoredPatternFile          : Path of the output file generated during path evaluation
+    <patternQualityThreshold>   : float in [0,1] representing minimum pattern quality
 ```
 
 
