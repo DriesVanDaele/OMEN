@@ -41,6 +41,9 @@ Usage probabilistic network generation:
 Usage gene ranking:
 ./ranking.sh <probabilisticNetwork>
     <probabilisticNetwork>      : Path of the output file generated during probabilistic network generation
+
+Usage clustering data generations (network, must-link, cannot-link):
+./generate_clustering_data.sh <filteredPatternFile> <N>
+    <filteredPatternFile>       : Path of the output file generated during path filtering
+    <N>                         : N is an integer, the top-N nodes that should be clustered
 ```
-
-
