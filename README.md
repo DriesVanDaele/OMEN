@@ -30,9 +30,17 @@ Usage explicit scoring of paths:
     <outputFile>         : Path of the output file to store scored patterns
 
 Usage explicit filtering of paths:
-./filter_paths.sh <scoredPatternFile> <patternQualityThreshold>
-    <scoredPatternFile          : Path of the output file generated during path evaluation
+./filter_patterns.sh <scoredPatternFile> <patternQualityThreshold>
+    <scoredPatternFile>         : Path of the output file generated during path evaluation
     <patternQualityThreshold>   : float in [0,1] representing minimum pattern quality
+
+Usage probabilistic network generation:
+./probabilistic_network.sh <filteredPatternFile>
+    <filteredPatternFile>       : Path of the output file generated during path filtering
+
+Usage gene ranking:
+./ranking.sh <probabilisticNetwork>
+    <probabilisticNetwork>      : Path of the output file generated during probabilistic network generation
 ```
 
 
