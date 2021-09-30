@@ -33,12 +33,10 @@ do
         echo "consult(experiment_framework), generate_experiment("${test}"), halt" >> argfile
     done
 
-    echo "here the shit starts..."
     # run the commands in parallel
     #parallel --gnu --ungroup --joblog joblog --workdir $workdir --sshloginfile nodes2 --delay 1 "yap -z" :::: argfile
     parallel --gnu --ungroup --delay 1 "yap -z " :::: argfile
 
-    echo "FFFFFFFFFF"
     # merge the output into a single file
     split_output_files_list=$(IFS=,; echo "[${split_output_files[*]}]")
     # for some reason YAP ends up hanging on the findall/3, instead, stick to swipl
