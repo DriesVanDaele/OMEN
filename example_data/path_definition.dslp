@@ -99,7 +99,7 @@ divide_by(X, Y, Z) :-
 
 Penalty # selected_start_gene(uniform_distribution, Penalty, Start_Gene) :-
     gene_selection(Genes, _),
-    probabilistic_debug_member(Start_Gene, Genes).
+    probabilistic_member(Start_Gene, Genes).
 
 1 # draw_start_gene(uniform_distribution, Start_Gene) :-
     genes(Genes),
