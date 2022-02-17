@@ -45,7 +45,7 @@ do
   
     # generate a random directory to write the output in
     unique_directory=$(head -c 500 /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 20 | head -n 1)
-    mkdir $archivedir/$unique_directory
+    mkdir -p $archivedir/$unique_directory
     mv new_final_output_file $archivedir/${unique_directory}/output
     mv $element $archivedir/${unique_directory}/
 
