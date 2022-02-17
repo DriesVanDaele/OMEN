@@ -27,7 +27,7 @@ Your own data can be loaded by modifying the first 6 lines of experiment_generat
 By default, pattern_collection.sh creates a directory called 'output' within the working directory
 Within this directory a subdirectory will be created for each run of pattern_collection.sh.
 It is within that directory that the output of pattern collection will be stored.
-Subsequent scripts (evaluate_paths.sh,...) should be called with inputs drawn from the directory as indicated below.
+Subsequent scripts (evaluate_paths.sh,...) should be called with inputs drawn from that directory as indicated below.
 In turn their output will be stored there as well.
 
 ```
