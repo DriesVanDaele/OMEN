@@ -20,7 +20,7 @@ Data format:
 and coverage data is specified in data/2.
 * The interaction network is defined by the predicate interaction/2 (args: Node, Node)
 
-Your own data can be loaded by modifying the first 6 lines of experiment_generator.pl
+Your own data can be loaded by modifying the first 6 lines of experiment_generator.pl (see also the README.md file in exampl_data)
 
 ## Note
 
