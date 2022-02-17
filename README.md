@@ -1,4 +1,4 @@
-# FAME: Network-based Driver Gene Identification using Mutual Exclusivity
+# OMEN: Network-based Driver Gene Identification using Mutual Exclusivity
 
 ## Requirements
 
