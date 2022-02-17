@@ -35,7 +35,7 @@ do
 
     # run the commands in parallel
     #parallel --gnu --ungroup --joblog joblog --workdir $workdir --sshloginfile nodes2 --delay 1 "yap -z" :::: argfile
-    parallel --gnu --ungroup --delay 1 "yap -z " :::: argfile
+    parallel --progress --gnu --ungroup --delay 1 "yap -z " :::: argfile
 
     # merge the output into a single file
     split_output_files_list=$(IFS=,; echo "[${split_output_files[*]}]")
