@@ -103,7 +103,7 @@ Penalty # selected_start_gene(uniform_distribution, Penalty, Start_Gene) :-
 
 1 # draw_start_gene(uniform_distribution, Start_Gene) :-
     genes(Genes),
-    probabilistic_debug_member(Start_Gene, Genes).
+    probabilistic_member(Start_Gene, Genes).
 
 1 # extend_selection([Current_Gene | Genes], Metric_Info, [Candidate_Gene, Current_Gene | Genes]) :-
     outgoing_neighbours(Current_Gene, Candidate_Genes0),

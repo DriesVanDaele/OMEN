@@ -106,7 +106,7 @@ Penalty # selected_start_gene(uniform_distribution, Penalty, Start_Gene) :-
 
 1 # draw_start_gene(uniform_distribution, Start_Gene) :-
     genes(Genes),
-    probabilistic_debug_member(Start_Gene, Genes).
+    probabilistic_member(Start_Gene, Genes).
 
 1 # extend_selection([Current_Gene | Genes], Metric_Info, [Candidate_Gene, Current_Gene | Genes]) :-
     outgoing_neighbours(Current_Gene, Candidate_Genes0),
@@ -158,7 +158,6 @@ product_helper([], Acc, P) :-
     P is Acc.
 product_helper([X | Xs], Acc, P) :-
     product_helper(Xs, X * Acc, P).
-
 halting(Probabilities, Halting_Probability) :-
     maplist(complement, Probabilities, Complement_Probabilities),
     product(Complement_Probabilities, Halting_Probability).
