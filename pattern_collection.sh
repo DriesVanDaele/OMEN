@@ -53,12 +53,12 @@ do
     ##mkdir ${unique_directory}
     for split_file in  ${element}.split+([0-9]);
     do
-	echo 'not removing file'
+      	##echo 'not removing file'
         ##mv $split_file  ${unique_directory}/
         ##mv ${split_file}.output ${unique_directory}/
 
-        #rm $split_file
-        #rm ${split_file}.output
+        rm $split_file
+        rm ${split_file}.output
     done
     rm argfile
 done
