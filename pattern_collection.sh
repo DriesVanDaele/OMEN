@@ -60,7 +60,7 @@ do
         #rm $split_file
         #rm ${split_file}.output
     done
-    #rm argfile
+    rm argfile
 done
 
 shopt -u extglob
