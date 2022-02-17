@@ -20,14 +20,26 @@ Data format:
 and coverage data is specified in data/2.
 * The interaction network is defined by the predicate interaction/2 (args: Node, Node)
 
+Your own data can be loaded by modifying the first 6 lines of experiment_generator.pl
+
+## Note
+
+By default, pattern_collection.sh creates a directory called 'output' within the working directory
+Within this directory a subdirectory will be created for each run of pattern_collection.sh.
+It is within that directory that the output of pattern collection will be stored.
+Subsequent scripts (evaluate_paths.sh,...) should be called with inputs drawn from the directory as indicated below.
+In turn their output will be stored there as well.
+
 ```
+
+
 Usage collecting patterns:
 ./pattern_collection.sh
 
 Usage explicit scoring of paths:
 ./evaluate_paths.sh <experimentFile> <outputFile>
-    <experimentFile>     : Path of the output file generated during pattern collection
-    <outputFile>         : Path of the output file to store scored patterns
+    <experimentFile>     : Path of the experiment file generated during pattern collection (e.g. new_experiment_[...].pl)
+    <outputFile>         : Path of the scored pattern file generated during pattern collection (e.g. output)
 
 Usage explicit filtering of paths:
 ./filter_patterns.sh <scoredPatternFile> <patternQualityThreshold>
