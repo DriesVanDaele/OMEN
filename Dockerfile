@@ -16,7 +16,7 @@ FROM ubuntu:18.04
 RUN apt-get update && apt-get install -y swi-prolog yap parallel
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
-WORKDIR /code
+WORKDIR /generated_files
 RUN apt-get update
 COPY . .
 ENTRYPOINT ["./pattern_collection.sh"]

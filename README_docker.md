@@ -23,7 +23,7 @@ assuming your working directory is FAME
 
 # run docker
 
-$ sudo docker run --rm  --name omen --mount type=bind,source=/home/user/temp_output,target=/output omen
+$ sudo docker run --rm  --name omen --mount type=bind,source=/home/user/temp_output,target=/generated_files/output omen
 
 adjust host path as needed.
 output directory to store directory containing the pattern output file
