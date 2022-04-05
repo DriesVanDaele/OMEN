@@ -1,4 +1,4 @@
-:- set_prolog_stack(global, limit(4*10**9)).
+:- set_prolog_flag(stack_limit, 30000000000).
 
 split(N, Parameter_File) :-
     consult(Parameter_File),

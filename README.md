@@ -34,8 +34,11 @@ In turn their output will be stored there as well.
 
 
 Usage collecting patterns:
-./pattern_collection.sh
-
+./pattern_collection.sh <numberOfThreads> <experimentFile> <outputFile>
+    <numberOfThreads>    : Number of CPU threads to use simultaneously
+    <experimentFile>     : Path to which a copy of the experiment file generated during pattern collection is written (ease of use feature)
+    <outputFile>         : Path to which a copy of the output file generaetd during pattern collection is written (ease of use feature)
+    
 Usage explicit scoring of paths:
 ./evaluate_paths.sh <experimentFile> <outputFile>
     <experimentFile>     : Path of the experiment file generated during pattern collection (e.g. new_experiment_[...].pl)
@@ -51,8 +54,9 @@ Usage probabilistic network generation:
     <filteredPatternFile>       : Path of the output file generated during path filtering
 
 Usage gene ranking:
-./ranking.sh <probabilisticNetwork>
+./ranking.sh <probabilisticNetwork> <network>
     <probabilisticNetwork>      : Path of the output file generated during probabilistic network generation
+    <network>                   : Path of the file containing the interaction network
 
 Usage clustering data generations (network, must-link, cannot-link):
 ./generate_clustering_data.sh <filteredPatternFile> <N>

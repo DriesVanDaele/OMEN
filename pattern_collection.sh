@@ -10,12 +10,17 @@ parameterFiles=($(swipl -g "generate_experiment(Experiment_File), write(Experime
 
 # The number of pieces in which to split each experiment.
 # This number has to be at least as high (ideally equal) as the 
-# number of cores you wish to employ simultaneously
-parts=20
+# number of cores/threds you wish to employ simultaneously
+parts="$1"
 
 # the archival directory storing the output and the experiment file
 archivedir=output
 
+# NOTE that originally experiment_generator.pl generated multiple experiments at once,
+# hence the iteration here. In the last version, we've assumed only 1 set of parameters
+# is processed at once, making this iteration redundant.
+# For ease of use, we copy $element to the given filepath $2. If this iteration were to be reinstated,
+# this would have to be changed.
 for element in "${parameterFiles[@]}";
 do
     # clean the working directory
@@ -40,12 +45,16 @@ do
     # merge the output into a single file
     split_output_files_list=$(IFS=,; echo "[${split_output_files[*]}]")
     # for some reason YAP ends up hanging on the findall/3, instead, stick to swipl
-    swipl -G30g -g "consult(experiment_merger), merge(${split_output_files_list}, new_final_output_file), halt"
+    swipl -g "consult(experiment_merger), merge(${split_output_files_list}, new_final_output_file), halt"
     #yap -z "consult(experiment_merger), merge(${split_output_files_list}), halt" > new_final_output_file
   
     # generate a random directory to write the output in
     unique_directory=$(head -c 500 /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 20 | head -n 1)
     mkdir -p $archivedir/$unique_directory
+
+    cp $element "$2"
+    cp new_final_output_file "$3"
+    
     mv new_final_output_file $archivedir/${unique_directory}/output
     mv $element $archivedir/${unique_directory}/
 
@@ -56,7 +65,6 @@ do
       	##echo 'not removing file'
         ##mv $split_file  ${unique_directory}/
         ##mv ${split_file}.output ${unique_directory}/
-
         rm $split_file
         rm ${split_file}.output
     done
