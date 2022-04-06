@@ -31,7 +31,8 @@ In case you choose to interact through the shell scripts, your data (CADD, cover
 has to initially be linked in experiment_parameters.pl (the example data is used by default)
 
 Alternatively, you can also interact through a Python interface (main.py) . The Python interface will generate this
-experiment_parameters.pl file thus all you have to do when using the Python interface is run main.py
+experiment_parameters.pl file and perform the appropriate chaining across the shell scripts,
+thus all you have to do when using the Python interface is run main.py
 using the appropriate arguments as outlined in that file.
 
 
