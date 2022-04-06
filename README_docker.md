@@ -1,8 +1,8 @@
 # Note
 
-The Docker file included here runs ONLY the pattern collection phase of the original experiment performed by OMEN
+The Docker file included here runs ONLY the pattern collection phase of the original experiment performed by OMEN.
 Note that this is just one of multiple phases listed in README.md.
-By specifying a different ENTRYPOINT, the Dockerfile can be modified to execute all subsequent steps in the process
+By specifying a different ENTRYPOINT, the Dockerfile can be modified to execute all subsequent steps in the process.
 
 (Each of these steps are listed in main.py and can be executed using that interface
 given that the software as specified in README.md is available. The purpose of this Dockerfile is solely 
