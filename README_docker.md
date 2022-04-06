@@ -8,9 +8,8 @@ By specifying a different ENTRYPOINT, the Dockerfile can be modified to execute 
 given that the software as specified in README.md is available. The purpose of this Dockerfile is solely 
 to give an idea of what a proper software environment should look like to replicate our experiments)
  
-You can run experiments using your own data by modifying the appropriate facts in  experiment_generator.pl: 
-
-the first 6 lines of experiment_parameters.pl can be adjusted to choose your own data and settings:
+Since the Dockerfile calls the shell scripts directly, you can run experiments using your own data by modifying the appropriate facts in  experiment_parameters.pl. 
+Its facts can be adjusted to set your own data and choose your own settings (the default ones correspond to the original experiment discussed in the paper):
 
 data('example_data/tokheim_pancancer_somatic_CADD.pl', 'example_data/tokheim_pancancer_somatic_coverage_ranks.pl').
 network_file('example_data/network.pl').
