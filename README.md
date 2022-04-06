@@ -33,7 +33,9 @@ has to initially be linked in experiment_parameters.pl (the example data is used
 Alternatively, you can also interact through a Python interface (main.py) . The Python interface will generate this
 experiment_parameters.pl file and perform the appropriate chaining across the shell scripts,
 thus all you have to do when using the Python interface is run main.py
-using the appropriate arguments as outlined in that file.
+using the appropriate arguments as outlined in that file. Note that main.py terminates by calling ranking.sh
+Thus the final output is a gene ranking. It does not perform the clustering, which can only be
+achieved by manually calling ./generate_clustering_data.sh.
 
 
 ## Note
