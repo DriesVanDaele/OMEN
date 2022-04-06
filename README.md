@@ -24,7 +24,7 @@ Note that both the interaction network and the coverage data need to contain a h
 
 ### Execution:
 
-OMEN runs through a sequence of distinct steps
+OMEN runs through a sequence of distinct steps.
 Each step can be called individually through a number of shell scripts as discussed in section Note below.
 
 In case you choose to interact through the shell scripts, your data (CADD, coverage, network)
