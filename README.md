@@ -25,12 +25,12 @@ Note that both the interaction network and the coverage data need to contain a h
 ### Execution:
 
 OMEN runs through a sequence of distinct steps.
-Each step can be called individually through a number of shell scripts as discussed in section Note below.
+Each step can be called individually through its respective shell script as discussed in section Note below.
 
 In case you choose to interact through the shell scripts, your data (CADD, coverage, network)
 has to initially be linked in experiment_parameters.pl (the example data is used by default)
 
-Alternatively, you can also interact through a Python interface (main.yp) . The Python interface will generate this
+Alternatively, you can also interact through a Python interface (main.py) . The Python interface will generate this
 experiment_parameters.pl file thus all you have to do when using the Python interface is run main.py
 using the appropriate arguments as outlined in that file.
 
