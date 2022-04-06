@@ -1,4 +1,4 @@
-# OMEN: Network-based Driver Gene Identification using Mutual Exclusivity
+# OMEN: Network-based Driver Gene Identification using Mutual Exclusivity (v 1.0.0)
 
 ## Requirements
 
