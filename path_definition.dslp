@@ -345,7 +345,7 @@ pattern_frequency_alt(Genes, P) :-
     P is P0 / N.
 
 pattern_frequency(Genes, P) :-
-    maplist(gene_mutsigcv, Genes, Probabilities),
+    maplist(gene_coverage, Genes, Probabilities),
     sumlist(Probabilities, P0),
     length(Probabilities, N),
     P is P0 / N.

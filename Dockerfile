@@ -19,4 +19,4 @@ ENV LC_ALL C.UTF-8
 WORKDIR /generated_files
 RUN apt-get update
 COPY . .
-ENTRYPOINT ["./pattern_collection.sh"]
+ENTRYPOINT ["./pattern_collection.sh", "7", "experiment_file_1", "output_file_1"]

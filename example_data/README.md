@@ -1,14 +1,11 @@
 This directory contains the data used in the original experiments.
-It is linked in experiment_generator.pl.
 
-If you wish to run experiments on your own data, format your data as Prolog facts like the example files,
-and set the appropriate paths in experiment_generator.pl
-
-for pattern_collection.sh in particular, it should be noted that 
-it runs the program in parallel, for optimal performance you should
-set the 'parts' variable to an appropriate number (default=20)
-
-If the original experiment is too computationally costly to replicate, you can still compute an approximation 
-by modifying the threshold/1 fact in experiment_generator.pl
-e.g. replace  threshold(10**(-6)). with threshold(10**(-5)). in order to explore the network less thoroughly.
-The probability specified in the argument is the probability at which paths are no longer further considered for extension.
+Note that when loading your own data it should be appropriately formatted.
+That is
+1) define the predicates:
+- gene_patient_probability/3
+- gene_coverage_helper/2
+- undirected_interaction/2
+2) include headers when appropriate (see the example data)
+- the coverage file has a header defining gene_coverage/2 that has to be included
+- the network file has a header defining subnetwork/2 and interaction/2 that has to be included

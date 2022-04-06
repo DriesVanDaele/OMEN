@@ -138,7 +138,7 @@ total_score(Genes, X, mcda(Type, Parameters), Y) :-
     ).
 
 pattern_frequency(Genes, P) :-
-    maplist(gene_mutsigcv, Genes, Probabilities),
+    maplist(gene_coverage, Genes, Probabilities),
     sumlist(Probabilities, P0),
     length(Probabilities, N),
     P is P0 / N.

@@ -2,6 +2,22 @@ import argparse
 import subprocess
 import sys
 
+#
+# A straightforward interface to interacting with OMEN. By default all parameters have been set to repeat the original experiment
+# thus given that all required software has been installed (see README.md), the original experiment can be repeated by calling
+#
+# $ python3 main.py
+#
+# (if the execution time takes too long, the original threshold probability of 10**(-6) can be changed to e.g. 2*10**(-5))
+# Note also the importance of setting a sensible value for the parameter -cores (default=7) as much of the computational
+# load can be parallellized
+#
+# Using the provided parameters, experiments on your own data can be performed. Note however that for the data:
+# (cadd_file, coverage_file and network_file) you should provide the required set of predicates in its proper format as outlined in README.md
+#
+# Modifying the path_definition_file is provided as a possibility, but should be only considered by experts, as this file is effectively
+# a core component of OMEN.
+#
 
 # PARSE ARGUMENTS
 
@@ -12,7 +28,7 @@ parser.add_argument("coverage_file", type=str, nargs='?', help="Coverage .pl fil
 parser.add_argument("network_file", type=str, nargs='?', help="Network filepath", default='example_data/network.pl')
 
 parser.add_argument("-pattern_quality_threshold", nargs='?', type=float, help="float specifying the quality a pattern has to exceed to be considered", default=0.67)
-parser.add_argument("-threshold_probability", nargs='?', type=str, help="math expression for the SLP threshold", default='2*10**(-5)')
+parser.add_argument("-threshold_probability", nargs='?', type=str, help="math expression for the SLP threshold", default='10**(-6)')
 parser.add_argument("-alpha", type=float, nargs='?', help="value between 0 and 1 managing trade-off between the mutex term and the gene_freq term", default=0.8)
 parser.add_argument("-path_definition_file", type=str, nargs='?', help="file specifying the path distribution", default='example_data/path_definition.dslp')
 
