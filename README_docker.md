@@ -22,7 +22,7 @@ path_definition_file('example_data/path_definition.dslp').
 
 $ sudo docker build -t omen .
 
-assuming your working directory is FAME
+assuming your working directory contains OMEN
 
 -------------
 
